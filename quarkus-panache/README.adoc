@@ -102,7 +102,33 @@ Bei Panach wird im Gegensatz zu Hibernate kein EntityManager benötigt sonder es
 Außerdem muss bei Panach die Id nicht manuell erstellt werden sonder ein surrogate key wird von der PanachEntity vererbt.
 Die Static Methoden bei Panach sind meiner Meinung nach übersichtlicher als die NamedQueries von Hibernate.
 Weiters sind die vorgefertigten Methoden bei Panach wie z.B. getById sehr hilfreich.
+Panach besitzt aber kein merge, wodurch das updaten etwas komplizierter ist.
 
+#### Panach CRUD (Beispiel Graveyard)
+g ist im Beispiel der Input Graveyard und id die Input Id
 
-
+##### POST (CREATE)
+----
+Graveyard.persist(g);
+----
+##### GET ALL (READ)
+----
+Graveyard.listAll()
+----
+##### GET By ID (READ)
+----
+Graveyard.findById(id)
+----
+##### PUT (UPDATE)
+die persistierte Entität muss gelesen werden um die Properties ändern zu können.
+----
+Graveyard graveyard = Graveyard.findById(g.id);
+graveyard.location = g.location;
+graveyard.name = g.name;
+graveyard.numberOfGraves = g.numberOfGraves;
+----
+##### DELETE
+----
+Graveyard.delete("id",id);
+----
 
