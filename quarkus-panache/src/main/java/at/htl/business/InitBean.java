@@ -22,7 +22,7 @@ public class InitBean {
 
         Graveyard graveyard2 = new Graveyard();
         graveyard2.location = "Leonding";
-        graveyard2.name = "hey";
+        graveyard2.name = "Stadtfriedhof";
         graveyard2.numberOfGraves = 10000L;
 
         graveyard2.persist();

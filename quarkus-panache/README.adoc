@@ -2,4 +2,96 @@
 
 ### deployment
 * start database
-** docker run --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=passme postgres[.line-through]####
+** docker run --name postgres -p 5432:5432 -e POSTGRES_USER=app -e POSTGRES_PASSWORD=passme postgres
+* start quarkus
+** mvn quarkus:dev
+** or in the IntelliJ
+
+### Project Erklärung
+#### create Project
+
+----
+ mvn io.quarkus:quarkus-maven-plugin:0.11.0:create \
+        -DprojectGroupId=at.htl \
+        -DprojectArtifactId=quarkus-panache-ThomasAnt
+----
+
+#### application.properties anpassen
+
+----
+quarkus.datasource.url=jdbc:postgresql://localhost:5432/postgres
+quarkus.datasource.driver=org.postgresql.Driver
+quarkus.datasource.username = app
+quarkus.datasource.password = passme
+----
+
+#### dependencies hinzufügen
+
+----
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-jdbc-postgresql</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-hibernate-orm-panache</artifactId>
+</dependency>
+----
+
+### PanachEntity Beispiel
+
+----
+@Entity
+public class Graveyard extends PanacheEntity {
+    public String name;
+    public String location;
+    public Long numberOfGraves;
+
+    public Graveyard() {
+    }
+}
+----
+
+#### Init Bean Beispiel
+
+----
+@ApplicationScoped
+public class InitBean {
+
+    @Transactional
+    void init(@Observes StartupEvent ev){
+        System.out.println("Init");
+        Graveyard graveyard = new Graveyard();
+        graveyard.location = "Linz";
+        graveyard.name = "St. Barbara";
+        graveyard.numberOfGraves = 20000L;
+
+        Graveyard graveyard2 = new Graveyard();
+        graveyard2.location = "Leonding";
+        graveyard2.name = "hey";
+        graveyard2.numberOfGraves = 10000L;
+
+        graveyard2.persist();
+        graveyard.persist();
+    }
+}
+----
+#### Panache Abfragen
+----
+//get a list of all graveyards and print them
+Graveyard.listAll().forEach(g -> System.out.println(g));
+//find by Id + Ausgabe
+System.out.println(Graveyard.findById(1L));
+//Ausgabe der Anzahl der Einträge
+System.out.println( Graveyard.count());
+----
+
+##### pondo zu NamedQueries -> static methodes
+----
+public static List<Graveyard> findByLocation(String location){
+    return list("location",location);
+}
+----
+----
+Graveyard.findByLocation("Linz").forEach(g -> System.out.println(g));
+----
