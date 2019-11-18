@@ -1,7 +1,7 @@
 # 03-quarkus-panach-ThomasAntensteiner
 
 ### deployment
-* start database
+* start database (docker)
 ** docker run --name postgres -p 5432:5432 -e POSTGRES_USER=app -e POSTGRES_PASSWORD=passme postgres
 * start quarkus
 ** mvn quarkus:dev
@@ -38,7 +38,7 @@ quarkus.datasource.password = passme
 </dependency>
 ----
 
-### PanachEntity Beispiel
+#### PanachEntity Beispiel
 
 ----
 @Entity
@@ -95,3 +95,14 @@ public static List<Graveyard> findByLocation(String location){
 ----
 Graveyard.findByLocation("Linz").forEach(g -> System.out.println(g));
 ----
+
+##### Panach Datenzugriff vs Hibernate Datenzugriff
+
+Bei Panach wird im Gegensatz zu Hibernate kein EntityManager benötigt sonder es wird einfach die persist Methode der PanachEntität aufgerufen.
+Außerdem muss bei Panach die Id nicht manuell erstellt werden sonder ein surrogate key wird von der PanachEntity vererbt.
+Die Static Methoden bei Panach sind meiner Meinung nach übersichtlicher als die NamedQueries von Hibernate.
+Weiters sind die vorgefertigten Methoden bei Panach wie z.B. getById sehr hilfreich.
+
+
+
+
