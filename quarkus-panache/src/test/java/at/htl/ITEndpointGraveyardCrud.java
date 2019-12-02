@@ -1,7 +1,9 @@
 package at.htl;
 
+import at.htl.model.Grave;
 import at.htl.model.Graveyard;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.http.ContentType;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.Test;
 
@@ -28,10 +30,15 @@ public class ITEndpointGraveyardCrud {
     public void testGraveyardPostEndpoint (){
         Graveyard graveyard = new Graveyard();
         graveyard.name = "Test Graveyard";
-        graveyard.location = " Test Location";
+        graveyard.location = "Test Location";
         graveyard.numberOfGraves = 3000L;
-        given().when().body(graveyard).post("/graveyard")
+
+        given().when().contentType(ContentType.JSON).body(graveyard).post("/graveyard")
                 .then().statusCode(200);
+        given().when().get("/graveyard/261").then().statusCode(200)
+                .body("name",is("Test Graveyard"),
+                        "location",is("Test Location"),
+                        "numberOfGraves",is(3000));
     }
 
     @Test
@@ -59,5 +66,19 @@ public class ITEndpointGraveyardCrud {
         given().when().delete("/graveyard/1")
                 .then().statusCode(200);
 
+    }
+
+    @Test
+    public void testGraveyardPut(){
+        Graveyard graveyard = new Graveyard();
+        graveyard.id = 27L;
+        graveyard.location = "putLocation";
+        graveyard.name = "putName";
+        graveyard.numberOfGraves = 999L;
+        given().when().contentType(ContentType.JSON).body(graveyard).put("/graveyard").then().statusCode(200);
+        given().when().get("/graveyard/" + graveyard.id).then().statusCode(200)
+                .body("name",is("putName"),
+                        "location",is("putLocation"),
+                        "numberOfGraves",is(999));
     }
 }

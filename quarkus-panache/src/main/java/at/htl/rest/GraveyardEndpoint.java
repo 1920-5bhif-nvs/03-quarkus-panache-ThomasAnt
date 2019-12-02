@@ -33,6 +33,7 @@ public class GraveyardEndpoint {
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response updateGraveyard(Graveyard g){
         if(g != null){
@@ -40,17 +41,18 @@ public class GraveyardEndpoint {
             graveyard.location = g.location;
             graveyard.name = g.name;
             graveyard.numberOfGraves = g.numberOfGraves;
-            return Response.ok().build();
+            return Response.ok().entity(graveyard).build();
         }
         return Response.status(404).build();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response createGraveyard(Graveyard g){
         Graveyard.persist(g);
-        return Response.ok().build();
+        return Response.ok().entity(g).build();
     }
 
     @DELETE
