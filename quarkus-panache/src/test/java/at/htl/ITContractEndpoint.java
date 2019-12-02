@@ -30,4 +30,10 @@ public class ITContractEndpoint {
                         "[0].familyName",is("Mustermann 1"),
                         "[0].numberBurried",is(2));
     }
+
+    @Test
+    public void getSalaryToPay(){
+        given().when().get("/contract/salary").then().statusCode(200)
+                .body(is("21000"));
+    }
 }

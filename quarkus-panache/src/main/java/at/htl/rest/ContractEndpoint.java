@@ -38,4 +38,17 @@ public class ContractEndpoint {
         }
         return Response.ok().entity(graves).build();
     }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/salary")
+    public Response getSalaryToGive(){
+        int sum = 0;
+        List<Contract> contracts =  Contract.listAll();
+        for (Contract con: contracts) {
+            sum += con.salary;
+        }
+        return Response.ok().entity(sum).build();
+    }
+
 }
