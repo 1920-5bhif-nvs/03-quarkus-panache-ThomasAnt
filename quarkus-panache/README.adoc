@@ -1,14 +1,14 @@
 # 03-quarkus-panach-ThomasAntensteiner
 
-### deployment
+## deployment
 * start database (docker)
 ** docker run --name postgres -p 5432:5432 -e POSTGRES_USER=app -e POSTGRES_PASSWORD=passme postgres
 * start quarkus
 ** mvn quarkus:dev
 ** or in the IntelliJ
 
-### Project Erklärung
-#### create Project
+## Project Erklärung
+### create Project
 
 ----
  mvn io.quarkus:quarkus-maven-plugin:0.11.0:create \
@@ -16,7 +16,7 @@
         -DprojectArtifactId=quarkus-panache-ThomasAnt
 ----
 
-#### application.properties anpassen
+### application.properties anpassen
 
 ----
 quarkus.datasource.url=jdbc:postgresql://localhost:5432/postgres
@@ -25,7 +25,7 @@ quarkus.datasource.username = app
 quarkus.datasource.password = passme
 ----
 
-#### dependencies hinzufügen
+### dependencies hinzufügen
 
 ----
 <dependency>
@@ -38,7 +38,7 @@ quarkus.datasource.password = passme
 </dependency>
 ----
 
-#### PanachEntity Beispiel
+### PanachEntity Beispiel
 
 ----
 @Entity
@@ -52,7 +52,7 @@ public class Graveyard extends PanacheEntity {
 }
 ----
 
-#### Init Bean Beispiel
+### Init Bean Beispiel
 
 ----
 @ApplicationScoped
@@ -76,7 +76,7 @@ public class InitBean {
     }
 }
 ----
-#### Panache Abfragen
+### Panache Abfragen
 ----
 //get a list of all graveyards and print them
 Graveyard.listAll().forEach(g -> System.out.println(g));
@@ -84,9 +84,11 @@ Graveyard.listAll().forEach(g -> System.out.println(g));
 System.out.println(Graveyard.findById(1L));
 //Ausgabe der Anzahl der Einträge
 System.out.println( Graveyard.count());
+//Selec Satement
+Graveyard.find("select g from Graveyard g");
 ----
 
-##### pondo zu NamedQueries -> static methodes
+#### pondo zu NamedQueries -> static methodes
 ----
 public static List<Graveyard> findByLocation(String location){
     return list("location",location);
@@ -96,7 +98,7 @@ public static List<Graveyard> findByLocation(String location){
 Graveyard.findByLocation("Linz").forEach(g -> System.out.println(g));
 ----
 
-##### Panach Datenzugriff vs Hibernate Datenzugriff
+### Panach Datenzugriff vs Hibernate Datenzugriff
 
 Bei Panach wird im Gegensatz zu Hibernate kein EntityManager benötigt sonder es wird einfach die persist Methode der PanachEntität aufgerufen.
 Außerdem muss bei Panach die Id nicht manuell erstellt werden sonder ein surrogate key wird von der PanachEntity vererbt.
@@ -104,22 +106,22 @@ Die Static Methoden bei Panach sind meiner Meinung nach übersichtlicher als die
 Weiters sind die vorgefertigten Methoden bei Panach wie z.B. getById sehr hilfreich.
 Panach besitzt aber kein merge, wodurch das updaten etwas komplizierter ist.
 
-#### Panach CRUD (Beispiel Graveyard)
+### Panach CRUD (Beispiel Graveyard)
 g ist im Beispiel der Input Graveyard und id die Input Id
 
-##### POST (CREATE)
+#### POST (CREATE)
 ----
 Graveyard.persist(g);
 ----
-##### GET ALL (READ)
+#### GET ALL (READ)
 ----
 Graveyard.listAll()
 ----
-##### GET By ID (READ)
+#### GET By ID (READ)
 ----
 Graveyard.findById(id)
 ----
-##### PUT (UPDATE)
+#### PUT (UPDATE)
 die persistierte Entität muss gelesen werden um die Properties ändern zu können.
 ----
 Graveyard graveyard = Graveyard.findById(g.id);
@@ -127,8 +129,18 @@ graveyard.location = g.location;
 graveyard.name = g.name;
 graveyard.numberOfGraves = g.numberOfGraves;
 ----
-##### DELETE
+#### DELETE
 ----
 Graveyard.delete("id",id);
+----
+
+### Add Swagger UI
+add maven dependency
+----
+mvnw quarkus:add-extension -Dextensions="openapi"
+----
+chanche Swagger path (into application.json): default("swagger-ui") +
+----
+quarkus.smallrye-openapi.path=/swagger
 ----
 
